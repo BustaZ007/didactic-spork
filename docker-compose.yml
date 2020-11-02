@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: example
+    restart: always
+    ports:
+    - "5432:3306"
+    volumes:
+    - db_data:/var/lib/mysql
+  app:
+    build:
+      context: .
+    ports:
+      - 8000:5000
+    volumes:
+      - ./app:/app
+    links:
+      - db
+    depends_on:
+      - db
+volumes:
+  db_data: {}
