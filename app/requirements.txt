@@ -2,3 +2,4 @@ flask==1.1.2
 flask_sqlalchemy==2.4.4
 flask_migrate==2.5.3
 flask_script==2.0.6
+pika==1.1.0
