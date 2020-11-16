@@ -1,0 +1,10 @@
+<html>
+  <head>
+    <title>All links</title>
+  </head>
+  <body>
+      {%for link in links%}
+      <p>URL: {{link.url}}   STATUS: {{link.status}}</p>
+      {%endfor%}
+  </body>
+</html>

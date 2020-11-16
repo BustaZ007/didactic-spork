@@ -1,10 +1,11 @@
 import pika as pika
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
+import json
 import os
-
+#  didactic-spork % docker-compose -f docker-compose.yml up --build
 app = Flask(__name__)
 db_user = os.environ["MYSQL_USER"]
 db_password = os.environ["MYSQL_PASSWORD"]
@@ -27,7 +28,7 @@ class Link(db.Model):
         self.status = status
 
     def __repr__(self):
-        return self.url
+        return "URL: "+self.url + "   Status: " + self.status
 
 
 db.create_all()
@@ -41,19 +42,17 @@ def index():
 @app.route('/links', methods=['GET'])
 def get_limks():
     links = Link.query.all()
-    print(links)
-    return str(links)
+    return render_template("index.html",
+    links = links)
 
 
 @app.route('/add_link', methods=['POST'])
 def add_link():
     url = request.json
     link = Link(url['url'], "Wait please...")
-    print(link)
     db.session.add(link)
     db.session.commit()
-
-    send_message(link.id, link.url)
+    send_message(str(link.id), link.url)
 
     return 'Link Added'
 
@@ -61,7 +60,6 @@ def add_link():
 @app.route("/add_link", methods=['PUT'])
 def update_link():
     link_id = request.args.get("link_id")
-
     link = db.session.query(Link).filter_by(id=link_id).one()
     link.status = request.args.get("link_status")
 
@@ -73,8 +71,7 @@ def update_link():
 def send_message(link_id: str, link_url: str):
     credentials = pika.PlainCredentials('user', 'user')
     connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit', 5672, '/', credentials))
-
-    message = json.dumps({'link_id' : link_id, 'link_url' : link_url})
+    message = "{\"link_id\" : \"" + link_id + "\", \"link_url\" : \"" + link_url+ "\"}"
     channel = connection.channel()
 
     channel.exchange_declare(exchange='app_que_ex',
