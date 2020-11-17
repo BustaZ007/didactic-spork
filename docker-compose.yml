@@ -1,6 +1,15 @@
 version: '3'
 
 services:
+  nginx:
+    build:
+      context: ./app/nginx
+      dockerfile: Dockerfile
+    depends_on:
+      - app1
+      - app2
+    ports:
+      - 85:80
   consumer:
     container_name: consumer
     restart: on-failure
@@ -38,12 +47,12 @@ services:
     - "5432:3306"
     volumes:
     - db_data:/var/lib/mysql
-  app:
-    container_name: application
+  app1:
+    container_name: application1
     build:
       context: .
     ports:
-      - 8000:5000
+      - 8010:5000
     volumes:
       - ./app:/app
     links:
@@ -52,6 +61,26 @@ services:
       - db
       - rabbit
     environment:
+      APP_ID: 1
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: database
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+  app2:
+    container_name: application2
+    build:
+      context: .
+    ports:
+      - 8020:5000
+    volumes:
+      - ./app:/app
+    links:
+      - db
+    depends_on:
+      - db
+      - rabbit
+    environment:
+      APP_ID: 2
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: database
       MYSQL_USER: root

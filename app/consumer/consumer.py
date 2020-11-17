@@ -20,9 +20,9 @@ def callback(ch, method, properties, body):
         status = str(request.status_code)
     except Exception as e:
         status = "404"
-    requests.put('http://app:5000/add_link?link_status=' + status + '&link_id='+ str(json_body['link_id']))
-    # conn_str = "http://nginx:80/links?link_id=" + str(json_body['link_id']) + "&link_status=" + status
-    # requests.put(conn_str)
+    # requests.put('http://app:5000/add_link?link_status=' + status + '&link_id='+ str(json_body['link_id']))
+    conn_str = "http://nginx:80/add_link?link_id=" + str(json_body['link_id']) + "&link_status=" + status
+    requests.put(conn_str)
 
 
 channel.basic_consume(queue='app_que', on_message_callback=callback, auto_ack=True)
