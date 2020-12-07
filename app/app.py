@@ -37,11 +37,11 @@ db.create_all()
 
 @app.route('/', methods=['GET'])
 def index():
-    return 'HelloWorls'
+    return 'HelloWorlds'
 
 
 @app.route('/links', methods=['GET'])
-def get_limks():
+def get_links():
     links = Link.query.all()
     return render_template("index.html",
     links = links)

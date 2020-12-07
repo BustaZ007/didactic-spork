@@ -18,6 +18,7 @@ services:
       dockerfile: DockerfileConsumer
     depends_on:
     - rabbit
+    - redis
 
   rabbit:
     container_name: dev_rabbit
@@ -85,5 +86,7 @@ services:
       MYSQL_DATABASE: database
       MYSQL_USER: root
       MYSQL_PASSWORD: root
+  redis:
+    image: redis:alpine
 volumes:
   db_data: {}
