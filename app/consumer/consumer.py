@@ -30,8 +30,11 @@ def callback(ch, method, properties, body):
         redis_connection.setex(link_url,timedelta(minutes=1), value=status )
     else:
         status = cache_value.decode("utf-8")
-    conn_str = "http://nginx:80/add_link?link_id=" + str(json_body['link_id']) + "&link_status=" + status
-    requests.put(conn_str)
+    conn_str = "http://nginx:80/add_link"
+    data = {}
+    data['link_id'] = str(json_body['link_id'])
+    data['link_status'] = status
+    requests.put(conn_str, json=data)
 
 
 channel.basic_consume(queue='app_que', on_message_callback=callback, auto_ack=True)
